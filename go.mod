@@ -1,4 +1,4 @@
-module .
+module github.com/nickrobinson/square-cli
 
 go 1.12
 
