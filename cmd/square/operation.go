@@ -32,7 +32,8 @@ func buildOperationCommand(sq *square.Square, name, path, httpVerb string, propF
 			var data map[string]interface{}
 			body, err := ioutil.ReadAll(resp.Body)
 			json.Unmarshal(body, &data)
-			fmt.Println(data)
+			jsonData, _ := json.MarshalIndent(data, "", "    ")
+			fmt.Println(string(jsonData))
 			return nil
 		},
 		Args: cobra.ExactArgs(len(urlParams)),
