@@ -33,6 +33,7 @@ to quickly create a Cobra application.`,
 		"sort_order": "string",
 	}))
 	customersCmd.AddCommand(buildOperationCommand(sq, "delete", "/v2/customers/{customer_id}", http.MethodDelete, map[string]string{}))
+	customersCmd.AddCommand(buildOperationCommand(sq, "get", "/v2/customers/{customer_id}", http.MethodGet, map[string]string{}))
 
 	cmd.AddCommand(customersCmd)
 	cmd.AddCommand(buildResourceCommand(sq, "customer-groups"))

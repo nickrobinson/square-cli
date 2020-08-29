@@ -21,7 +21,6 @@ func buildOperationCommand(sq *square.Square, name, path, httpVerb string, propF
 			client := &http.Client{}
 			req, err := http.NewRequest(httpVerb, "https://connect.squareupsandbox.com"+formatURL(path, args), nil)
 			req.Header.Add("Authorization", "Bearer "+sq.AccessKey)
-			fmt.Println(req.Header.Get("Authorization"))
 			if err != nil {
 				return err
 			}
