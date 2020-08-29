@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/nickrobinson/square-cli/pkg/square"
 	"github.com/spf13/cobra"
+	"net/http"
 )
 
 func main() {
@@ -24,7 +25,13 @@ to quickly create a Cobra application.`,
 		Annotations: make(map[string]string),
 	}
 
-	cmd.AddCommand(buildResourceCommand(sq, "customers"))
+	customersCmd := buildResourceCommand(sq, "customers")
+	customersCmd.AddCommand(buildOperationCommand(sq, "list", "/v2/customers", http.MethodGet, map[string]string{
+		"cursor":     "string",
+		"sort_field": "string",
+		"sort_order": "string",
+	}))
+	cmd.AddCommand(customersCmd)
 	cmd.AddCommand(buildResourceCommand(sq, "customer-groups"))
 	cmd.AddCommand(buildResourceCommand(sq, "invoices"))
 

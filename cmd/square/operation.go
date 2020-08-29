@@ -65,10 +65,7 @@ func buildOperationCommand(sq *square.Square, name, path, httpVerb string, propF
 		cmd.Flags().SetAnnotation(flagName, "request", []string{"true"})
 	}
 
-	parentCmd.AddCommand(cmd)
-	parentCmd.Annotations[name] = "operation"
-
-	return operationCmd
+	return cmd
 }
 
 //
