@@ -25,12 +25,15 @@ to quickly create a Cobra application.`,
 		Annotations: make(map[string]string),
 	}
 
+	// Customers Resource
 	customersCmd := buildResourceCommand(sq, "customers")
 	customersCmd.AddCommand(buildOperationCommand(sq, "list", "/v2/customers", http.MethodGet, map[string]string{
 		"cursor":     "string",
 		"sort_field": "string",
 		"sort_order": "string",
 	}))
+	customersCmd.AddCommand(buildOperationCommand(sq, "delete", "/v2/customers/{customer_id}", http.MethodDelete, map[string]string{}))
+
 	cmd.AddCommand(customersCmd)
 	cmd.AddCommand(buildResourceCommand(sq, "customer-groups"))
 	cmd.AddCommand(buildResourceCommand(sq, "invoices"))
