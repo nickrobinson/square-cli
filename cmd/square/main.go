@@ -26,18 +26,28 @@ to quickly create a Cobra application.`,
 	}
 
 	// Customers Resource
-	customersCmd := buildResourceCommand(sq, "customers")
-	customersCmd.AddCommand(buildOperationCommand(sq, "list", "/v2/customers", http.MethodGet, map[string]string{
+	rCustomersCmd := buildResourceCommand(sq, "customers")
+	rCustomersCmd.AddCommand(buildOperationCommand(sq, "list", "/v2/customers", http.MethodGet, map[string]string{
 		"cursor":     "string",
 		"sort_field": "string",
 		"sort_order": "string",
 	}))
-	customersCmd.AddCommand(buildOperationCommand(sq, "delete", "/v2/customers/{customer_id}", http.MethodDelete, map[string]string{}))
-	customersCmd.AddCommand(buildOperationCommand(sq, "get", "/v2/customers/{customer_id}", http.MethodGet, map[string]string{}))
+	rCustomersCmd.AddCommand(buildOperationCommand(sq, "delete", "/v2/customers/{customer_id}", http.MethodDelete, map[string]string{}))
+	rCustomersCmd.AddCommand(buildOperationCommand(sq, "get", "/v2/customers/{customer_id}", http.MethodGet, map[string]string{}))
 
-	cmd.AddCommand(customersCmd)
+	rInvoicesCmd := buildResourceCommand(sq, "invoices")
+	rInvoicesCmd.AddCommand(buildOperationCommand(sq, "list", "/v2/invoices", http.MethodGet, map[string]string{
+		"cursor":      "string",
+		"sort_field":  "string",
+		"sort_order":  "string",
+		"location_id": "string",
+	}))
+
+	cmd.AddCommand(rCustomersCmd)
+	cmd.AddCommand(rInvoicesCmd)
 	cmd.AddCommand(buildResourceCommand(sq, "customer-groups"))
-	cmd.AddCommand(buildResourceCommand(sq, "invoices"))
+
+	cmd.AddCommand()
 
 	return cmd
 }
