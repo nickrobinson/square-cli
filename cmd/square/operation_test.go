@@ -8,3 +8,13 @@ func Test_formatURL(t *testing.T) {
 		t.Errorf("Url format was not correct, got: %s, expected: %s", url, "/v2/customers/39030VYCW8WTF92871ZEEWATX8")
 	}
 }
+
+func Test_getUseString(t *testing.T) {
+	name := "test"
+	args := []string{"{customer-id}"}
+	useString := buildUseString(name, args)
+	expectedString := "test <customer-id>"
+	if useString != expectedString {
+		t.Errorf("Use string was not correct, got: %s, expected: %s", useString, expectedString)
+	}
+}

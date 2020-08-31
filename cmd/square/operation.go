@@ -15,7 +15,7 @@ func buildOperationCommand(sq *square.Square, name, path, httpVerb string, propF
 	urlParams := extractURLParams(path)
 	httpVerb = strings.ToUpper(httpVerb)
 	cmd := &cobra.Command{
-		Use:         name,
+		Use:         buildUseString(name, urlParams),
 		Annotations: make(map[string]string),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client := &http.Client{}
@@ -54,6 +54,19 @@ func buildOperationCommand(sq *square.Square, name, path, httpVerb string, propF
 func extractURLParams(path string) []string {
 	re := regexp.MustCompile(`{\w+}`)
 	return re.FindAllString(path, -1)
+}
+
+func buildUseString(name string, urlParams []string) string {
+	args := strings.Map(func(r rune) rune {
+		switch r {
+		case '{':
+			return '<'
+		case '}':
+			return '>'
+		}
+		return r
+	}, strings.Join(urlParams, " "))
+	return fmt.Sprintf("%s %s", name, args)
 }
 
 func formatURL(path string, urlParams []string) string {
