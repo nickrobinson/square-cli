@@ -19,7 +19,8 @@ func buildOperationCommand(sq *square.Square, name, path, httpVerb string, propF
 		Annotations: make(map[string]string),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			client := &http.Client{}
-			req, err := http.NewRequest(httpVerb, "https://connect.squareupsandbox.com"+formatURL(path, args), nil)
+			url := fmt.Sprintf("https://%s%s", sq.Config.Endpoint, formatURL(path, args))
+			req, err := http.NewRequest(httpVerb, url, nil)
 			req.Header.Add("Authorization", "Bearer "+sq.AccessKey)
 			if err != nil {
 				return err

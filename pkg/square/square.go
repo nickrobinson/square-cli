@@ -8,13 +8,6 @@ type Square struct {
 	*config.Config
 }
 
-func New() *Square {
-	c := config.New()
-	return NewWithConfig(c)
-}
-
-func NewWithConfig(c *config.Config) *Square {
-	return &Square{
-		Config: c,
-	}
+func (sq *Square) InitConfig() {
+	sq.Config = config.New()
 }

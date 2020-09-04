@@ -12,6 +12,7 @@ import (
 type Config struct {
 	AccessKey string `mapstructure:"access_token"`
 	AppId     string `mapstructure:"app_id"`
+	Endpoint  string `mapstructure:"endpoint"`
 }
 
 var cfgFile string
@@ -33,7 +34,9 @@ func (c *Config) GetConfigFolder(xdgPath string) string {
 }
 
 func New() *Config {
-	c := &Config{}
+	c := &Config{
+		Endpoint: "connect.squareupsandbox.com",
+	}
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -62,7 +65,7 @@ func New() *Config {
 		log.Fatalf("%s", err)
 	}
 
-	viper.UnmarshalKey("default", &c)
+	viper.UnmarshalKey(viper.GetString("profile"), &c)
 
 	return c
 }
