@@ -45,6 +45,7 @@ to quickly create a Cobra application.`,
 	rCustomersCmd.AddCommand(buildOperationCommand(&sq, "delete", "/v2/customers/{customer_id}", http.MethodDelete, map[string]string{}))
 	rCustomersCmd.AddCommand(buildOperationCommand(&sq, "get", "/v2/customers/{customer_id}", http.MethodGet, map[string]string{}))
 
+	// Invoices Resource
 	rInvoicesCmd := buildResourceCommand(&sq, "invoices")
 	rInvoicesCmd.AddCommand(buildOperationCommand(&sq, "list", "/v2/invoices", http.MethodGet, map[string]string{
 		"cursor":      "string",
@@ -53,8 +54,14 @@ to quickly create a Cobra application.`,
 		"location_id": "string",
 	}))
 
+	// Locations Resource
+	rLocationsCmd := buildResourceCommand(&sq, "locations")
+	rLocationsCmd.AddCommand(buildOperationCommand(&sq, "list", "/v2/locations", http.MethodGet, map[string]string{}))
+	rLocationsCmd.AddCommand(buildOperationCommand(&sq, "get", "/v2/locations/{location_id}", http.MethodGet, map[string]string{}))
+
 	rootCmd.AddCommand(rCustomersCmd)
 	rootCmd.AddCommand(rInvoicesCmd)
+	rootCmd.AddCommand(rLocationsCmd)
 	rootCmd.AddCommand(buildResourceCommand(&sq, "customer-groups"))
 
 	return rootCmd
