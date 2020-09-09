@@ -1,11 +1,12 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/nickrobinson/square-cli/pkg/config"
 	"github.com/nickrobinson/square-cli/pkg/square"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"net/http"
 )
 
 func main() {
@@ -16,6 +17,8 @@ func main() {
 var (
 	sq square.Square
 )
+
+var version = "dev"
 
 func buildRootCmd() *cobra.Command {
 	cobra.OnInitialize(initConfig)
@@ -30,6 +33,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 		Annotations: make(map[string]string),
+		Version:     version,
 	}
 
 	rootCmd.PersistentFlags().StringP("profile", "p", "default", "profile to use")
