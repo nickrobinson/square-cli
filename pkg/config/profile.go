@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/nickrobinson/square-cli/pkg/validators"
@@ -21,6 +22,16 @@ type Profile struct {
 	LogLevel    string
 	ProfileName string
 	AccessToken string
+}
+
+// CreateProfile creates a profile when running init
+func (p *Profile) CreateProfile() error {
+	writeErr := p.writeProfile(viper.GetViper())
+	if writeErr != nil {
+		return writeErr
+	}
+
+	return nil
 }
 
 // GetConfigFolder retrieves the folder where the config file is stored
@@ -87,7 +98,7 @@ func (p *Profile) InitConfig() {
 }
 
 func (p *Profile) GetAccessToken() (string, error) {
-	key := viper.GetString("default.access_token")
+	key := viper.GetString(p.ProfileName + ".access_token")
 	if key != "" {
 		err := validators.AccessToken(key)
 		if err != nil {
@@ -97,4 +108,35 @@ func (p *Profile) GetAccessToken() (string, error) {
 	}
 
 	return "", errors.New("your Access Token has not been configured. Use `square init` to set your Access Key")
+}
+
+// GetConfigField returns the configuration field for the specific profile
+func (p *Profile) GetConfigField(field string) string {
+	return p.ProfileName + "." + field
+}
+
+func (p *Profile) writeProfile(runtimeViper *viper.Viper) error {
+	profilesFile := viper.ConfigFileUsed()
+
+	err := makePath(profilesFile)
+	if err != nil {
+		return err
+	}
+
+	if p.AccessToken != "" {
+		runtimeViper.Set(p.GetConfigField("access_token"), strings.TrimSpace(p.AccessToken))
+	}
+
+	runtimeViper.MergeInConfig()
+
+	runtimeViper.SetConfigFile(profilesFile)
+
+	// Ensure we preserve the config file type
+	runtimeViper.SetConfigType(filepath.Ext(profilesFile))
+	err = runtimeViper.WriteConfig()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

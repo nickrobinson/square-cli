@@ -12,10 +12,11 @@ type deleteCmd struct {
 }
 
 func newDeleteCmd() *deleteCmd {
-	gc := &deleteCmd{}
+	dc := &deleteCmd{}
 
-	gc.reqs.Method = "DELETE"
-	gc.reqs.Cmd = &cobra.Command{
+	dc.reqs.Method = "DELETE"
+	dc.reqs.Profile = &Profile
+	dc.reqs.Cmd = &cobra.Command{
 		Use:   "delete",
 		Args:  validators.ExactArgs(1),
 		Short: "Make DELETE requests to the Square API.",
@@ -26,10 +27,10 @@ For a full list of supported paths, see the API reference: https://developer.squ
 Delete a customer:
 $ square delete /v2/customers/CGQ7M5073H2RQABDMCJDCX7RF4`,
 
-		RunE: gc.reqs.RunRequestsCmd,
+		RunE: dc.reqs.RunRequestsCmd,
 	}
 
-	gc.reqs.InitFlags()
+	dc.reqs.InitFlags()
 
-	return gc
+	return dc
 }

@@ -12,10 +12,11 @@ type postCmd struct {
 }
 
 func newPostCmd() *postCmd {
-	gc := &postCmd{}
+	pc := &postCmd{}
 
-	gc.reqs.Method = "POST"
-	gc.reqs.Cmd = &cobra.Command{
+	pc.reqs.Method = "POST"
+	pc.reqs.Profile = &Profile
+	pc.reqs.Cmd = &cobra.Command{
 		Use:   "post",
 		Args:  validators.ExactArgs(1),
 		Short: "Make POST requests to the Square API.",
@@ -26,10 +27,10 @@ For a full list of supported paths, see the API reference: https://developer.squ
 Update a customer:
 $ square post /v2/customers -d '{"given_name": "Jack", "family_name": "Dorsey"}'`,
 
-		RunE: gc.reqs.RunRequestsCmd,
+		RunE: pc.reqs.RunRequestsCmd,
 	}
 
-	gc.reqs.InitFlags()
+	pc.reqs.InitFlags()
 
-	return gc
+	return pc
 }
