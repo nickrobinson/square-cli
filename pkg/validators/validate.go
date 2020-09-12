@@ -1,6 +1,7 @@
 package validators
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -11,4 +12,10 @@ func AccessToken(input string) error {
 	}
 
 	return nil
+}
+
+// IsValidJSON check passed JSON string for validity
+func IsValidJSON(s string) bool {
+	var js map[string]interface{}
+	return json.Unmarshal([]byte(s), &js) == nil
 }

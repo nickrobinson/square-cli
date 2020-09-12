@@ -2,6 +2,7 @@ package requests
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"github.com/nickrobinson/square-cli/pkg/ansi"
 	"github.com/nickrobinson/square-cli/pkg/config"
 	"github.com/nickrobinson/square-cli/pkg/square"
+	"github.com/nickrobinson/square-cli/pkg/validators"
 
 	"github.com/spf13/cobra"
 )
@@ -118,6 +120,9 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 		}
 	} else {
 		data = params.data[0]
+		if validators.IsValidJSON(data) == false {
+			return []byte{}, errors.New("Invalid JSON data provided")
+		}
 	}
 
 	configureReq := func(req *http.Request) {
