@@ -29,7 +29,7 @@ $ square delete /v2/customers/CGQ7M5073H2RQABDMCJDCX7RF4`,
 		RunE: gc.reqs.RunRequestsCmd,
 	}
 
-	gc.reqs.InitFlags(true)
+	gc.reqs.InitFlags()
 
 	return gc
 }
