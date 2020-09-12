@@ -43,12 +43,10 @@ func TestBuildDataForRequestPagination(t *testing.T) {
 	rb.Method = http.MethodGet
 
 	params := &RequestParameters{
-		limit:         "10",
-		startingAfter: "bender",
-		endingBefore:  "leela",
+		limit: "10",
 	}
 
-	expected := "limit=10&starting_after=bender&ending_before=leela"
+	expected := "limit=10"
 
 	output, _ := rb.buildDataForRequest(params)
 	assert.Equal(t, expected, output)
@@ -59,9 +57,7 @@ func TestBuildDataForRequestGetOnly(t *testing.T) {
 	rb.Method = http.MethodPost
 
 	params := &RequestParameters{
-		limit:         "10",
-		startingAfter: "bender",
-		endingBefore:  "leela",
+		limit: "10",
 	}
 
 	expected := ""
