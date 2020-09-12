@@ -7,27 +7,24 @@ import (
 	"github.com/nickrobinson/square-cli/pkg/validators"
 )
 
-type getCmd struct {
+type deleteCmd struct {
 	reqs requests.Base
 }
 
-func newGetCmd() *getCmd {
-	gc := &getCmd{}
+func newDeleteCmd() *deleteCmd {
+	gc := &deleteCmd{}
 
-	gc.reqs.Method = "GET"
+	gc.reqs.Method = "DELETE"
 	gc.reqs.Cmd = &cobra.Command{
-		Use:   "get",
+		Use:   "delete",
 		Args:  validators.ExactArgs(1),
-		Short: "Make GET requests to the Square API.",
-		Long: `Make GET requests to the Square API.
+		Short: "Make DELETE requests to the Square API.",
+		Long: `Make DELETE requests to the Square API.
 
 For a full list of supported paths, see the API reference: https://developer.squareup.com/reference/square
 
-GET list of customers:
-$ square get customers
-
-GET 50 invoices:
-$ square get --limit 50 invoices`,
+Delete a customer:
+$ square delete /v2/customers/CGQ7M5073H2RQABDMCJDCX7RF4`,
 
 		RunE: gc.reqs.RunRequestsCmd,
 	}

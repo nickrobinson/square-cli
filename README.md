@@ -5,6 +5,7 @@
 
 ## Usage
 
-- `square init` # Initialize Configuration
+- `square init` - Initialize Configuration
 - `square get customers`
 - `square get invoices -d location_id=L471AVFQJ8Z7J`
+- `square delete customers/93Y9K6BQ8WRPV1C45GVMG9JG6M`
