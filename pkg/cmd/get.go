@@ -32,7 +32,7 @@ $ square get --limit 50 invoices`,
 		RunE: gc.reqs.RunRequestsCmd,
 	}
 
-	gc.reqs.InitFlags(true)
+	gc.reqs.InitFlags()
 
 	return gc
 }

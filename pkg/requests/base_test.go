@@ -29,15 +29,6 @@ func TestBuildDataForRequestParamOrdering(t *testing.T) {
 	assert.Equal(t, expected, output)
 }
 
-func TestBuildDataForRequestExpand(t *testing.T) {
-	rb := Base{}
-	params := &RequestParameters{expand: []string{"futurama.employees", "futurama.ships"}}
-	expected := "expand[]=futurama.employees&expand[]=futurama.ships"
-
-	output, _ := rb.buildDataForRequest(params)
-	assert.Equal(t, expected, output)
-}
-
 func TestBuildDataForRequestPagination(t *testing.T) {
 	rb := Base{}
 	rb.Method = http.MethodGet
@@ -87,7 +78,7 @@ func TestMakeRequest(t *testing.T) {
 		assert.Equal(t, http.MethodGet, r.Method)
 		assert.Equal(t, "/foo/bar", r.URL.Path)
 		assert.Equal(t, "Bearer sk_test_1234", r.Header.Get("Authorization"))
-		assert.Equal(t, "bender=robot&fry=human&expand[]=futurama.employees&expand[]=futurama.ships", r.URL.RawQuery)
+		assert.Equal(t, "bender=robot&fry=human", r.URL.RawQuery)
 		assert.Equal(t, "", string(reqBody))
 	}))
 	defer ts.Close()
@@ -96,8 +87,7 @@ func TestMakeRequest(t *testing.T) {
 	rb.Method = http.MethodGet
 
 	params := &RequestParameters{
-		data:   []string{"bender=robot", "fry=human"},
-		expand: []string{"futurama.employees", "futurama.ships"},
+		data: []string{"bender=robot", "fry=human"},
 	}
 
 	_, err := rb.MakeRequest("sk_test_1234", "/foo/bar", params)

@@ -19,7 +19,6 @@ import (
 // RequestParameters captures the structure of the parameters that can be sent to Square
 type RequestParameters struct {
 	data        []string
-	expand      []string
 	idempotency string
 	limit       string
 	version     string
@@ -76,12 +75,15 @@ func (rb *Base) RunRequestsCmd(cmd *cobra.Command, args []string) error {
 }
 
 // InitFlags initialize shared flags for all requests commands
-func (rb *Base) InitFlags(includeData bool) {
-	if includeData {
-		rb.Cmd.Flags().StringArrayVarP(&rb.Parameters.data, "data", "d", []string{}, "Data to pass for the API request")
+func (rb *Base) InitFlags() {
+	dataUsage := "Data to pass for the API request"
+	if rb.Method == http.MethodPut || rb.Method == http.MethodPost {
+		dataUsage = "JSON data to pass in API request body"
 	}
-	rb.Cmd.Flags().StringArrayVarP(&rb.Parameters.expand, "expand", "e", []string{}, "Response attributes to expand inline. Available on all API requests, see the documentation for specific objects that support expansion")
-	rb.Cmd.Flags().StringVarP(&rb.Parameters.idempotency, "idempotency", "i", "", "Sets the idempotency key for your request, preventing replaying the same requests within a 24 hour period")
+	if rb.Method == http.MethodPost {
+		rb.Cmd.Flags().StringVarP(&rb.Parameters.idempotency, "idempotency", "i", "", "Sets the idempotency key for your request, preventing replaying the same requests within a 24 hour period")
+	}
+	rb.Cmd.Flags().StringArrayVarP(&rb.Parameters.data, "data", "d", []string{}, dataUsage)
 	rb.Cmd.Flags().BoolVarP(&rb.showHeaders, "show-headers", "s", false, "Show headers on responses to GET, POST, and DELETE requests")
 	rb.Cmd.Flags().BoolVarP(&rb.autoConfirm, "confirm", "c", false, "Automatically confirm the command being entered. WARNING: This will result in NOT being prompted for confirmation for certain commands")
 
@@ -108,9 +110,14 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 		Verbose:   rb.showHeaders,
 	}
 
-	data, err := rb.buildDataForRequest(params)
-	if err != nil {
-		return []byte{}, err
+	data := ""
+	if rb.Method == http.MethodGet || rb.Method == http.MethodDelete {
+		data, err = rb.buildDataForRequest(params)
+		if err != nil {
+			return []byte{}, err
+		}
+	} else {
+		data = params.data[0]
 	}
 
 	configureReq := func(req *http.Request) {
@@ -147,7 +154,7 @@ func (rb *Base) buildDataForRequest(params *RequestParameters) (string, error) {
 	keys := []string{}
 	values := []string{}
 
-	if len(params.data) > 0 || len(params.expand) > 0 {
+	if len(params.data) > 0 {
 		for _, datum := range params.data {
 			splitDatum := strings.SplitN(datum, "=", 2)
 
@@ -157,10 +164,6 @@ func (rb *Base) buildDataForRequest(params *RequestParameters) (string, error) {
 
 			keys = append(keys, splitDatum[0])
 			values = append(values, splitDatum[1])
-		}
-		for _, datum := range params.expand {
-			keys = append(keys, "expand[]")
-			values = append(values, datum)
 		}
 	}
 

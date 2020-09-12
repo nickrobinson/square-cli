@@ -24,12 +24,12 @@ func newPutCmd() *putCmd {
 For a full list of supported paths, see the API reference: https://developer.squareup.com/reference/square
 
 Update a customer:
-$ square put /v2/customers/CGQ7M5073H2RQABDMCJDCX7RF4 -d company_name=Square`,
+$ square put /v2/customers/CGQ7M5073H2RQABDMCJDCX7RF4 -d '{"company_name": "Square"}'`,
 
 		RunE: gc.reqs.RunRequestsCmd,
 	}
 
-	gc.reqs.InitFlags(true)
+	gc.reqs.InitFlags()
 
 	return gc
 }
