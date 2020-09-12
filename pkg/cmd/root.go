@@ -29,11 +29,7 @@ var rootCmd = &cobra.Command{
 with Square easier. You can interact with all Square Connect APIs using this tool.
 
 Before you use the CLI, you'll need to configure it:
-$ square configure
-
-If you're working on multiple projects, you can run the configure command with the
---project-name flag:
-$ square configure --project-name spiffy-cafe`,
+$ square init`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
