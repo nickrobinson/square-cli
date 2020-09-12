@@ -52,4 +52,5 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&Profile.LogLevel, "log-level", "info", "log level (debug, info, warn, error)")
 
 	rootCmd.AddCommand(newGetCmd().reqs.Cmd)
+	rootCmd.AddCommand(newDeleteCmd().reqs.Cmd)
 }
