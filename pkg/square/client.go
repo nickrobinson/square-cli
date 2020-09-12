@@ -45,7 +45,7 @@ func (c *Client) PerformRequest(method, path string, params string, configure fu
 	url = c.BaseURL.ResolveReference(url)
 
 	var body io.Reader
-	if method == http.MethodPost {
+	if method == http.MethodPost || method == http.MethodPut {
 		body = strings.NewReader(params)
 	} else {
 		url.RawQuery = params

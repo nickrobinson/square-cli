@@ -18,13 +18,11 @@ import (
 
 // RequestParameters captures the structure of the parameters that can be sent to Square
 type RequestParameters struct {
-	data          []string
-	expand        []string
-	startingAfter string
-	endingBefore  string
-	idempotency   string
-	limit         string
-	version       string
+	data        []string
+	expand      []string
+	idempotency string
+	limit       string
+	version     string
 }
 
 func (r *RequestParameters) AppendData(data []string) {
@@ -170,14 +168,6 @@ func (rb *Base) buildDataForRequest(params *RequestParameters) (string, error) {
 		if params.limit != "" {
 			keys = append(keys, "limit")
 			values = append(values, params.limit)
-		}
-		if params.startingAfter != "" {
-			keys = append(keys, "starting_after")
-			values = append(values, params.startingAfter)
-		}
-		if params.endingBefore != "" {
-			keys = append(keys, "ending_before")
-			values = append(values, params.endingBefore)
 		}
 	}
 

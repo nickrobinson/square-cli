@@ -3,7 +3,9 @@ package square
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/nickrobinson/square-cli/pkg/ansi"
@@ -44,6 +46,7 @@ func (t *verboseTransport) dumpRequest(req *http.Request) {
 	info := fmt.Sprintf("> %s %s://%s%s", req.Method, req.URL.Scheme, req.URL.Host, req.URL.RequestURI())
 	t.verbosePrintln(info)
 	t.dumpHeaders(req.Header, ">")
+	t.dumpBody(req, ">")
 }
 
 func (t *verboseTransport) dumpResponse(resp *http.Response) {
@@ -60,10 +63,10 @@ func (t *verboseTransport) dumpHeaders(header http.Header, indent string) {
 			}
 			for _, v := range vv {
 				if v != "" {
-					// r := regexp.MustCompile("(?i)^(basic|bearer) (.+)")
-					// if r.MatchString(v) {
-					// 	v = r.ReplaceAllString(v, "$1 [REDACTED]")
-					// }
+					r := regexp.MustCompile("(?i)^(basic|bearer) (.+)")
+					if r.MatchString(v) {
+						v = r.ReplaceAllString(v, "$1 [REDACTED]")
+					}
 
 					info := fmt.Sprintf("%s %s: %s", indent, name, v)
 					t.verbosePrintln(info)
@@ -71,6 +74,12 @@ func (t *verboseTransport) dumpHeaders(header http.Header, indent string) {
 			}
 		}
 	}
+}
+
+func (t *verboseTransport) dumpBody(req *http.Request, indent string) {
+	body, _ := ioutil.ReadAll(req.Body)
+	info := fmt.Sprintf("%s %s", indent, string(body))
+	t.verbosePrintln(info)
 }
 
 func (t *verboseTransport) verbosePrintln(msg string) {

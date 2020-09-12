@@ -53,4 +53,5 @@ func init() {
 
 	rootCmd.AddCommand(newGetCmd().reqs.Cmd)
 	rootCmd.AddCommand(newDeleteCmd().reqs.Cmd)
+	rootCmd.AddCommand(newPutCmd().reqs.Cmd)
 }
