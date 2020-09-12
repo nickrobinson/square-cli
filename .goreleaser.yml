@@ -19,7 +19,7 @@ builds:
     goarch:
       - amd64
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+      - -s -w -X github.com/nickrobinson/square-cli/pkg/cmd.version={{.Version}}
   - id: square-linux
     binary: square
     env:
@@ -30,7 +30,7 @@ builds:
     goarch:
       - amd64
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+      - -s -w -X github.com/nickrobinson/square-cli/pkg/cmd.version={{.Version}}
   - id: square-windows
     binary: square
     env:
@@ -44,7 +44,7 @@ builds:
       - amd64
       - 386
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser
+      - -s -w -X github.com/nickrobinson/square-cli/pkg/cmd.version={{.Version}}
 archives:
   - replacements:
       darwin: Darwin
