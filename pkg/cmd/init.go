@@ -1,8 +1,14 @@
 package cmd
 
 import (
-	"github.com/nickrobinson/square-cli/pkg/validators"
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+	"syscall"
+
 	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 type initCmd struct {
@@ -14,7 +20,7 @@ func newInitCmd() *initCmd {
 
 	ic.Cmd = &cobra.Command{
 		Use:   "init",
-		Args:  validators.ExactArgs(1),
+		Args:  cobra.NoArgs,
 		Short: "Initialize Square CLI config.",
 		Long:  `Initialize Square CLI configuration file.`,
 
@@ -25,6 +31,28 @@ func newInitCmd() *initCmd {
 }
 
 func (ic *initCmd) runInitCmd(cmd *cobra.Command, args []string) error {
-	// TODO: Add init logic
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter Profile Name (default): ")
+
+	profileName, _ := reader.ReadString('\n')
+	profileName = strings.TrimSuffix(profileName, "\n")
+	if profileName == "" {
+		profileName = "default"
+	}
+
+	fmt.Print("Enter Access Token: ")
+	accessTokenBytes, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return err
+	}
+	accessToken := string(accessTokenBytes)
+	Profile.ProfileName = profileName
+	Profile.AccessToken = accessToken
+
+	profileErr := Profile.CreateProfile()
+	if profileErr != nil {
+		return profileErr
+	}
+
 	return nil
 }

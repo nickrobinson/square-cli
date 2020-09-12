@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/astaxie/beego v1.12.2
 	github.com/briandowns/spinner v1.11.1
+	github.com/google/martian v2.1.0+incompatible
 	github.com/iancoleman/strcase v0.1.1
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mitchellh/go-homedir v1.1.0
