@@ -6,6 +6,7 @@ import (
 
 	"github.com/nickrobinson/square-cli/pkg/config"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 )
 
@@ -43,7 +44,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(Profile.InitConfig)
 
-	rootCmd.PersistentFlags().String("access-key", "", "Your test mode API secret key to use for the command")
+	rootCmd.PersistentFlags().StringVar(&Profile.AccessToken, "access-token", "", "The access token to use for authentication")
 	rootCmd.PersistentFlags().StringVar(&Profile.ConfigFile, "config", "", "config file (default is $HOME/.config/square/config.toml)")
 	rootCmd.PersistentFlags().StringVar(&Profile.ProfileName, "profile", "default", "the profile name to read from for config")
 	rootCmd.PersistentFlags().StringVar(&Profile.LogLevel, "log-level", "info", "log level (debug, info, warn, error)")
@@ -57,4 +58,5 @@ func init() {
 	rootCmd.AddCommand(newPostCmd().reqs.Cmd)
 
 	rootCmd.AddCommand(newInitCmd().Cmd)
+	doc.GenMarkdownTree(rootCmd, "/Users/nickrobinson/Development/go/src/github.com/nickrobinson/square-cli/docs")
 }

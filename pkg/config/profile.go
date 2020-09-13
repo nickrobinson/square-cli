@@ -39,7 +39,7 @@ func (p *Profile) GetConfigFolder(xdgPath string) string {
 	configPath := xdgPath
 
 	log.WithFields(log.Fields{
-		"prefix": "profile.Profile.GetConfigFolder",
+		"prefix": "config.Profile.GetConfigFolder",
 		"path":   configPath,
 	}).Debug("Using config file")
 
@@ -98,6 +98,10 @@ func (p *Profile) InitConfig() {
 }
 
 func (p *Profile) GetAccessToken() (string, error) {
+	if p.AccessToken != "" {
+		return p.AccessToken, nil
+	}
+
 	key := viper.GetString(p.ProfileName + ".access_token")
 	if key != "" {
 		err := validators.AccessToken(key)
@@ -107,7 +111,7 @@ func (p *Profile) GetAccessToken() (string, error) {
 		return key, nil
 	}
 
-	return "", errors.New("your Access Token has not been configured. Use `square init` to set your Access Key")
+	return "", errors.New("Your Access Token has not been setup. Use `square init` to set your Access Key")
 }
 
 // GetConfigField returns the configuration field for the specific profile
