@@ -1,5 +1,6 @@
 # Square CLI 
 [![Build Status](https://travis-ci.com/nickrobinson/square-cli.svg?token=mYDTz49qs6zeiYaoGsHS&branch=master)](https://travis-ci.com/nickrobinson/square-cli)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/nickrobinson/square-cli)
 
 `square` makes all [Square Connect APIs](https://developer.squareup.com/explorer) available on the command line.
 
