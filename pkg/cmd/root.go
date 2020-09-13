@@ -6,7 +6,6 @@ import (
 
 	"github.com/nickrobinson/square-cli/pkg/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
 )
 
@@ -58,5 +57,4 @@ func init() {
 	rootCmd.AddCommand(newPostCmd().reqs.Cmd)
 
 	rootCmd.AddCommand(newInitCmd().Cmd)
-	doc.GenMarkdownTree(rootCmd, "/Users/nickrobinson/Development/go/src/github.com/nickrobinson/square-cli/docs")
 }
