@@ -18,5 +18,5 @@ require (
 	github.com/tidwall/pretty v1.0.2
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
-	google.golang.org/appengine v1.6.1
+	google.golang.org/appengine v1.6.6
 )
