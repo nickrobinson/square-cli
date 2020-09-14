@@ -88,20 +88,19 @@ func (rb *Base) InitFlags() {
 	rb.Cmd.Flags().StringArrayVarP(&rb.Parameters.data, "data", "d", []string{}, dataUsage)
 	rb.Cmd.Flags().BoolVarP(&rb.showHeaders, "show-headers", "s", false, "Show headers on responses to GET, POST, and DELETE requests")
 	rb.Cmd.Flags().BoolVarP(&rb.autoConfirm, "confirm", "c", false, "Automatically confirm the command being entered. WARNING: This will result in NOT being prompted for confirmation for certain commands")
-
 	// Conditionally add flags for GET requests. I'm doing it here to keep `limit`, `start_after` and `ending_before` unexported
 	if rb.Method == http.MethodGet {
 		rb.Cmd.Flags().StringVarP(&rb.Parameters.limit, "limit", "l", "", "A limit on the number of objects to be returned, between 1 and 100 (default is 10)")
 	}
 
 	// Hidden configuration flags, useful for dev/debugging
-	rb.Cmd.Flags().StringVar(&rb.APIBaseURL, "api-base", square.DefaultAPIBaseURL, "Sets the API base URL")
-	rb.Cmd.Flags().MarkHidden("api-base") // #nosec G104
+	rb.Cmd.Flags().StringVar(&rb.APIBaseURL, "base-url", "", "Sets the API base URL")
+	rb.Cmd.Flags().MarkHidden("base-url")
 }
 
 // MakeRequest will make a request to the Square API with the specific variables given to it
 func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters) ([]byte, error) {
-	parsedBaseURL, err := url.Parse(rb.APIBaseURL)
+	parsedBaseURL, err := url.Parse(rb.getURL())
 	if err != nil {
 		return []byte{}, err
 	}
@@ -260,4 +259,19 @@ func normalizePath(path string) string {
 		return "/v2" + path
 	}
 	return "/v2/" + path
+}
+
+func (rb *Base) getURL() string {
+	if rb.APIBaseURL != "" {
+		return rb.APIBaseURL
+	}
+
+	switch rb.Profile.Environment.String() {
+	case "sandbox":
+		return "https://connect.squareupsandbox.com"
+	case "production":
+		return "https://connect.squareup.com"
+	default:
+		return ""
+	}
 }

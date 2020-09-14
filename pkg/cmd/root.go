@@ -45,8 +45,9 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&Profile.AccessToken, "access-token", "", "The access token to use for authentication")
 	rootCmd.PersistentFlags().StringVar(&Profile.ConfigFile, "config", "", "config file (default is $HOME/.config/square/config.toml)")
-	rootCmd.PersistentFlags().StringVar(&Profile.ProfileName, "profile", "default", "the profile name to read from for config")
+	rootCmd.PersistentFlags().StringVarP(&Profile.ProfileName, "profile", "p", "default", "the profile name to read from for config")
 	rootCmd.PersistentFlags().StringVar(&Profile.LogLevel, "log-level", "info", "log level (debug, info, warn, error)")
+	rootCmd.PersistentFlags().VarP(&Profile.Environment, "env", "e", "Environment to use for request (sandbox/production)")
 
 	viper.SetEnvPrefix("square")
 	viper.AutomaticEnv()

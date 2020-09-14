@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/nickrobinson/square-cli/pkg/flags"
 	"github.com/nickrobinson/square-cli/pkg/validators"
 	log "github.com/sirupsen/logrus"
 
@@ -18,10 +19,13 @@ import (
 
 // Profile handles all things related to managing the project specific configurations
 type Profile struct {
-	ConfigFile  string
-	LogLevel    string
-	ProfileName string
-	AccessToken string
+	ConfigFile            string
+	LogLevel              string
+	ProfileName           string
+	AccessToken           string
+	SandboxAccessToken    string
+	ProductionAccessToken string
+	Environment           flags.EnvironmentFlag
 }
 
 // CreateProfile creates a profile when running init
@@ -102,7 +106,7 @@ func (p *Profile) GetAccessToken() (string, error) {
 		return p.AccessToken, nil
 	}
 
-	key := viper.GetString(p.ProfileName + ".access_token")
+	key := viper.GetString(p.ProfileName + "." + p.Environment.String() + "_access_token")
 	if key != "" {
 		err := validators.AccessToken(key)
 		if err != nil {
@@ -127,8 +131,12 @@ func (p *Profile) writeProfile(runtimeViper *viper.Viper) error {
 		return err
 	}
 
-	if p.AccessToken != "" {
-		runtimeViper.Set(p.GetConfigField("access_token"), strings.TrimSpace(p.AccessToken))
+	if p.SandboxAccessToken != "" {
+		runtimeViper.Set(p.GetConfigField("sandbox_access_token"), strings.TrimSpace(p.SandboxAccessToken))
+	}
+
+	if p.ProductionAccessToken != "" {
+		runtimeViper.Set(p.GetConfigField("production_access_token"), strings.TrimSpace(p.ProductionAccessToken))
 	}
 
 	runtimeViper.MergeInConfig()

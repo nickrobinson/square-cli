@@ -39,15 +39,23 @@ func (ic *initCmd) runInitCmd(cmd *cobra.Command, args []string) error {
 	if profileName == "" {
 		profileName = "default"
 	}
+	Profile.ProfileName = profileName
 
-	fmt.Print("Enter Access Token: ")
+	fmt.Print("Enter Sandbox Access Token: ")
 	accessTokenBytes, err := terminal.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return err
 	}
 	accessToken := string(accessTokenBytes)
-	Profile.ProfileName = profileName
-	Profile.AccessToken = accessToken
+	Profile.SandboxAccessToken = accessToken
+
+	fmt.Print("\nEnter Production Access Token: ")
+	accessTokenBytes, err = terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return err
+	}
+	accessToken = string(accessTokenBytes)
+	Profile.ProductionAccessToken = accessToken
 
 	profileErr := Profile.CreateProfile()
 	if profileErr != nil {

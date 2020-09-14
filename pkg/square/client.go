@@ -11,12 +11,6 @@ import (
 	"time"
 )
 
-// DefaultAPIBaseURL is the default base URL for API requests
-const DefaultAPIBaseURL = "https://connect.squareup.com"
-
-// DefaultDashboardBaseURL is the default base URL for dashboard requests
-const DefaultDashboardBaseURL = "https://developer.squareup.com/apps"
-
 // Client is the API client used to sent requests to Square.
 type Client struct {
 	// The base URL (protocol + hostname) used for all requests sent by this
