@@ -125,7 +125,6 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 	}
 
 	configureReq := func(req *http.Request) {
-		rb.setIdempotencyHeader(req, params)
 		rb.setVersionHeader(req, params)
 	}
 
@@ -204,20 +203,6 @@ func encode(keys []string, values []string) string {
 		buf.WriteString(url.QueryEscape(value))
 	}
 	return buf.String()
-}
-
-func (rb *Base) setIdempotencyHeader(request *http.Request, params *RequestParameters) {
-	if params.idempotency != "" {
-		request.Header.Set("Idempotency-Key", params.idempotency)
-		if rb.Method == http.MethodGet || rb.Method == http.MethodDelete {
-			warning := fmt.Sprintf(
-				"Warning: sending an idempotency key with a %s request has no effect and should be avoided, as %s requests are idempotent by definition.",
-				rb.Method,
-				rb.Method,
-			)
-			fmt.Println(warning)
-		}
-	}
 }
 
 func (rb *Base) setVersionHeader(request *http.Request, params *RequestParameters) {
