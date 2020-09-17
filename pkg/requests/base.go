@@ -106,9 +106,9 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 	}
 
 	client := &square.Client{
-		BaseURL:   parsedBaseURL,
-		AccessKey: accessToken,
-		Verbose:   rb.showHeaders,
+		BaseURL:     parsedBaseURL,
+		AccessToken: accessToken,
+		Verbose:     rb.showHeaders,
 	}
 
 	data := ""

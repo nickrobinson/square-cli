@@ -17,9 +17,9 @@ type Client struct {
 	// client.
 	BaseURL *url.URL
 
-	// Access key used to authenticate requests sent by this client. If left
+	// Access token used to authenticate requests sent by this client. If left
 	// empty, the `Authorization` header will be omitted.
-	AccessKey string
+	AccessToken string
 
 	// When this is enabled, request and response headers will be printed to
 	// stdout.
@@ -53,8 +53,8 @@ func (c *Client) PerformRequest(method, path string, params string, configure fu
 	req.Header.Set("Accept-Encoding", "identity")
 	req.Header.Set("Content-Type", "application/json")
 
-	if c.AccessKey != "" {
-		req.Header.Set("Authorization", "Bearer "+c.AccessKey)
+	if c.AccessToken != "" {
+		req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 	}
 
 	if configure != nil {
