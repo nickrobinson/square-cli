@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/nickrobinson/square-cli/pkg/requests"
+	"github.com/nickrobinson/square-cli/internal/requests"
 	"github.com/nickrobinson/square-cli/pkg/validators"
 )
 

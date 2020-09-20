@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nickrobinson/square-cli/pkg/flags"
+	"github.com/nickrobinson/square-cli/internal/flags"
 	"github.com/nickrobinson/square-cli/pkg/validators"
 	log "github.com/sirupsen/logrus"
 

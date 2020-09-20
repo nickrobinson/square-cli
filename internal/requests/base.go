@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nickrobinson/square-cli/pkg/ansi"
+	"github.com/nickrobinson/square-cli/internal/ansi"
 	"github.com/nickrobinson/square-cli/pkg/config"
 	"github.com/nickrobinson/square-cli/pkg/square"
 	"github.com/nickrobinson/square-cli/pkg/validators"
@@ -141,7 +141,7 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 		}
 
 		result := ansi.ColorizeJSON(string(body), os.Stdout)
-		fmt.Println(result)
+		fmt.Print(result)
 	}
 
 	return body, nil

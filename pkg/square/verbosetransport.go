@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/nickrobinson/square-cli/pkg/ansi"
+	"github.com/nickrobinson/square-cli/internal/ansi"
 )
 
 // inspectHeaders is the whitelist of headers that will be printed.

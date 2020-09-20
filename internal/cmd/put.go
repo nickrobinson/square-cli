@@ -3,29 +3,29 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/nickrobinson/square-cli/pkg/requests"
+	"github.com/nickrobinson/square-cli/internal/requests"
 	"github.com/nickrobinson/square-cli/pkg/validators"
 )
 
-type postCmd struct {
+type putCmd struct {
 	reqs requests.Base
 }
 
-func newPostCmd() *postCmd {
-	pc := &postCmd{}
+func newPutCmd() *putCmd {
+	pc := &putCmd{}
 
-	pc.reqs.Method = "POST"
+	pc.reqs.Method = "PUT"
 	pc.reqs.Profile = &Profile
 	pc.reqs.Cmd = &cobra.Command{
-		Use:   "post",
+		Use:   "put",
 		Args:  validators.ExactArgs(1),
-		Short: "Make POST requests to the Square API.",
-		Long: `Make POST requests to the Square API.
+		Short: "Make PUT requests to the Square API.",
+		Long: `Make PUT requests to the Square API.
 
 For a full list of supported paths, see the API reference: https://developer.squareup.com/reference/square
 
 Update a customer:
-$ square post /v2/customers -d '{"given_name": "Jack", "family_name": "Dorsey"}'`,
+$ square put /v2/customers/CGQ7M5073H2RQABDMCJDCX7RF4 -d '{"company_name": "Square"}'`,
 
 		RunE: pc.reqs.RunRequestsCmd,
 	}
