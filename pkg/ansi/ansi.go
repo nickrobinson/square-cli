@@ -40,7 +40,7 @@ func ColorizeJSON(json string, w io.Writer) string {
 		return json
 	}
 
-	return string(pretty.Color([]byte(json), nil))
+	return string(pretty.Color(pretty.Pretty([]byte(json)), nil))
 }
 
 //
