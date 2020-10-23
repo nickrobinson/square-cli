@@ -62,3 +62,11 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+brews:
+  -
+    tap:
+      owner: nickrobinson
+      name: tap
+    commit_author:
+      name: Nick Robinson
+      email: nrobinson13@gmail.com
