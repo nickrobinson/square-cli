@@ -5,6 +5,10 @@
 `square` makes all [Square Connect APIs](https://developer.squareup.com/explorer) available on the command line.
 
 ## Getting Started
+
+The fastest way to get started is via our Homebrew tap:
+`brew install nickrobinson/tap/square`
+
 Run the following command to initialize the Square CLI. If you haven't done so already, you will need to head over the the [Square Developer Dashboard](https://developer.squareup.com/apps/) to create a new App, and retrieve your Access Key.
 
 `# square init`
