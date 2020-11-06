@@ -251,12 +251,5 @@ func (rb *Base) getURL() string {
 		return rb.APIBaseURL
 	}
 
-	switch rb.Profile.Environment.String() {
-	case "sandbox":
-		return "https://connect.squareupsandbox.com"
-	case "production":
-		return "https://connect.squareup.com"
-	default:
-		return ""
-	}
+	return rb.Profile.GetBaseURL()
 }

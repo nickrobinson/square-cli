@@ -25,6 +25,8 @@ type Profile struct {
 	AccessToken           string
 	SandboxAccessToken    string
 	ProductionAccessToken string
+	SandboxBaseUrl        string
+	ProductionBaseUrl     string
 	Environment           flags.EnvironmentFlag
 }
 
@@ -116,6 +118,23 @@ func (p *Profile) GetAccessToken() (string, error) {
 	}
 
 	return "", errors.New("Your Access Token has not been setup. Use `square init` to set your Access Key")
+}
+
+func (p *Profile) GetBaseURL() string {
+	switch p.Environment.String() {
+	case "sandbox":
+		if viper.IsSet(p.ProfileName + "." + "sandbox_base_url") {
+			return viper.GetString(p.ProfileName + "." + "sandbox_base_url")
+		}
+		return "https://connect.squareupsandbox.com"
+	case "production":
+		if viper.IsSet(p.ProfileName + "." + "production_base_url") {
+			return viper.GetString(p.ProfileName + "." + "production_base_url")
+		}
+		return "https://connect.squareup.com"
+	default:
+		return ""
+	}
 }
 
 // GetConfigField returns the configuration field for the specific profile
