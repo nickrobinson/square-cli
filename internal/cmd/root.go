@@ -58,4 +58,5 @@ func init() {
 	rootCmd.AddCommand(newPostCmd().reqs.Cmd)
 
 	rootCmd.AddCommand(newInitCmd().Cmd)
+	rootCmd.AddCommand(newStatusCmd().Cmd)
 }
