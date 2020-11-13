@@ -20,4 +20,4 @@ Run the following command to initialize the Square CLI. If you haven't done so a
 - `square get invoices -d location_id=L471AVFQJ8Z7J`
 - `square delete customers/93Y9K6BQ8WRPV1C45GVMG9JG6M`
 - `square put customers/93Y9K6BQ8WRPV1C45GVMG9JG6M -d '{"company_name": "Square"}'`
-- `square post customers -d '{"given_name": "Jack", "family_name": "Dorsey"}'`
+- `square -p my-awesome-profile post customers -d '{"given_name": "Jack", "family_name": "Dorsey"}'`
