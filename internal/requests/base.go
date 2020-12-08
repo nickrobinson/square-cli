@@ -93,6 +93,8 @@ func (rb *Base) InitFlags() {
 		rb.Cmd.Flags().StringVarP(&rb.Parameters.limit, "limit", "l", "", "A limit on the number of objects to be returned, between 1 and 100 (default is 10)")
 	}
 
+	rb.Cmd.Flags().StringVarP(&rb.Parameters.version, "api-version", "v", "", "Square API Version to use for request")
+
 	// Hidden configuration flags, useful for dev/debugging
 	rb.Cmd.Flags().StringVar(&rb.APIBaseURL, "base-url", "", "Sets the API base URL")
 	rb.Cmd.Flags().MarkHidden("base-url")
