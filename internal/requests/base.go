@@ -128,6 +128,7 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 
 	configureReq := func(req *http.Request) {
 		rb.setVersionHeader(req, params)
+		rb.setUserAgent(req, params)
 	}
 
 	resp, err := client.PerformRequest(rb.Method, path, data, configureReq)
@@ -210,6 +211,14 @@ func encode(keys []string, values []string) string {
 func (rb *Base) setVersionHeader(request *http.Request, params *RequestParameters) {
 	if params.version != "" {
 		request.Header.Set("Square-Version", params.version)
+	}
+}
+
+func (rb *Base) setUserAgent(request *http.Request, params *RequestParameters) {
+	if rb.Cmd != nil {
+		request.Header.Set("User-Agent", fmt.Sprintf("square-cli/%s", rb.Cmd.Root().Version))
+	} else {
+		request.Header.Set("User-Agent", "square-cli")
 	}
 }
 

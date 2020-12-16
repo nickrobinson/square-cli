@@ -20,6 +20,7 @@ var inspectHeaders = []string{
 	"Idempotency-Replayed",
 	"Request-Id",
 	"Square-Version",
+	"User-Agent",
 }
 
 type verboseTransport struct {
