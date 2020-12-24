@@ -1,7 +1,6 @@
 package square
 
 import (
-	"context"
 	"io"
 	"net"
 	"net/http"
@@ -62,7 +61,7 @@ func (c *Client) PerformRequest(method, path string, params string, configure fu
 	}
 
 	if c.httpClient == nil {
-		c.httpClient = newHTTPClient(c.Verbose, os.Getenv("SQUARE_CLI_UNIX_SOCKET"))
+		c.httpClient = newHTTPClient(c.Verbose)
 	}
 
 	resp, err := c.httpClient.Do(req)
@@ -73,31 +72,14 @@ func (c *Client) PerformRequest(method, path string, params string, configure fu
 	return resp, nil
 }
 
-func newHTTPClient(verbose bool, unixSocket string) *http.Client {
-	var httpTransport *http.Transport
-	if unixSocket != "" {
-		dialFunc := func(network, addr string) (net.Conn, error) {
-			return net.Dial("unix", unixSocket)
-		}
-		dialContext := func(_ context.Context, _, _ string) (net.Conn, error) {
-			return net.Dial("unix", unixSocket)
-		}
-		httpTransport = &http.Transport{
-			DialContext:           dialContext,
-			DialTLS:               dialFunc,
-			ResponseHeaderTimeout: 30 * time.Second,
-			ExpectContinueTimeout: 10 * time.Second,
-			TLSHandshakeTimeout:   10 * time.Second,
-		}
-	} else {
-		httpTransport = &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			DialContext: (&net.Dialer{
-				Timeout:   30 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).DialContext,
-			TLSHandshakeTimeout: 10 * time.Second,
-		}
+func newHTTPClient(verbose bool) *http.Client {
+	httpTransport := &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		TLSHandshakeTimeout: 10 * time.Second,
 	}
 
 	tr := &verboseTransport{
