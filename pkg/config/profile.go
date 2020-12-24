@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nickrobinson/square-cli/internal/flags"
 	"github.com/nickrobinson/square-cli/pkg/validators"
 	log "github.com/sirupsen/logrus"
 
@@ -27,7 +26,7 @@ type Profile struct {
 	ProductionAccessToken string
 	SandboxBaseUrl        string
 	ProductionBaseUrl     string
-	Environment           flags.EnvironmentFlag
+	Environment           Environment
 }
 
 // CreateProfile creates a profile when running init
@@ -133,7 +132,7 @@ func (p *Profile) GetBaseURL() string {
 		}
 		return "https://connect.squareup.com"
 	default:
-		return ""
+		return "https://connect.squareupsandbox.com"
 	}
 }
 
