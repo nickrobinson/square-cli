@@ -24,8 +24,8 @@ var rootCmd = &cobra.Command{
 		"get": "api",
 	},
 	Version: version,
-	Short:   "A CLI to help you develop your application with Square",
-	Long: `The Square CLI gives you tools to make integrating your application
+	Short:   "Your friendly neighboorhood 🔲 CLI",
+	Long: `The 🔲 CLI gives you tools to make integrating your application
 with Square easier. You can interact with all Square Connect APIs using this tool.
 
 Before you use the CLI, you'll need to configure it:
