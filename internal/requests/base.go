@@ -12,9 +12,9 @@ import (
 
 	"github.com/nickrobinson/square-cli/internal/ansi"
 	"github.com/nickrobinson/square-cli/pkg/config"
-	"github.com/nickrobinson/square-cli/pkg/square"
 	"github.com/nickrobinson/square-cli/pkg/validators"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +34,8 @@ func (r *RequestParameters) AppendData(data []string) {
 type Base struct {
 	Cmd *cobra.Command
 
-	Method  string
-	Profile *config.Profile
+	Method string
+	Config *config.Config
 
 	Parameters RequestParameters
 
@@ -64,7 +64,7 @@ func (rb *Base) RunRequestsCmd(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	accessToken, err := rb.Profile.GetAccessToken()
+	accessToken, err := rb.Config.GetAccessToken()
 	if err != nil {
 		return err
 	}
@@ -102,12 +102,14 @@ func (rb *Base) InitFlags() {
 
 // MakeRequest will make a request to the Square API with the specific variables given to it
 func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters) ([]byte, error) {
+	log.Infof("Running MakeRequest for %s", path)
 	parsedBaseURL, err := url.Parse(rb.getURL())
 	if err != nil {
+		log.Error(err)
 		return []byte{}, err
 	}
 
-	client := &square.Client{
+	client := Client{
 		BaseURL:     parsedBaseURL,
 		AccessToken: accessToken,
 		Verbose:     rb.showHeaders,
@@ -117,6 +119,7 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 	if rb.Method == http.MethodGet || rb.Method == http.MethodDelete {
 		data, err = rb.buildDataForRequest(params)
 		if err != nil {
+			log.Error(err)
 			return []byte{}, err
 		}
 	} else {
@@ -133,6 +136,7 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 
 	resp, err := client.PerformRequest(rb.Method, path, data, configureReq)
 	if err != nil {
+		log.Error(err)
 		return []byte{}, err
 	}
 	defer resp.Body.Close()
@@ -140,6 +144,7 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 
 	if !rb.SuppressOutput {
 		if err != nil {
+			log.Error(err)
 			return []byte{}, err
 		}
 
@@ -262,5 +267,5 @@ func (rb *Base) getURL() string {
 		return rb.APIBaseURL
 	}
 
-	return rb.Profile.GetBaseURL()
+	return rb.Config.GetBaseURL()
 }

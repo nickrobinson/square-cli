@@ -2,21 +2,32 @@ package config
 
 import "errors"
 
-type Environment struct {
-	name string
-}
+type Environment string
+
+const (
+	Sandbox    Environment = "sandbox"
+	Production             = "production"
+)
 
 func (e *Environment) String() string {
-	return e.name
+	switch *e {
+	case Sandbox:
+		return "sandbox"
+	case Production:
+		return "production"
+	}
+	return ""
 }
 
 func (e *Environment) Set(name string) error {
-	if name == "production" || name == "sandbox" {
-		e.name = name
-		return nil
+	if name == "sandbox" {
+		*e = Sandbox
+	} else if name == "production" {
+		*e = Production
 	} else {
-		return errors.New("Invalid environment name, must be sandbox or production")
+		return errors.New("Invalid Environment Name")
 	}
+	return nil
 }
 
 func (e *Environment) Type() string {
