@@ -1,12 +1,10 @@
 package square
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 func (s *Square) GetRequest(cmd *cobra.Command, args []string) error {
-	log.Info("Running GetRequest")
 	s.RequestConfig.Method = "GET"
 	return s.RequestConfig.RunRequestsCmd(cmd, args)
 }

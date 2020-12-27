@@ -33,8 +33,7 @@ func makePath(path string) error {
 func (c *Config) Load() error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
-	// v.AddConfigPath(GetConfigFolder(os.Getenv("XDG_CONFIG_HOME")))
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(GetConfigFolder(os.Getenv("XDG_CONFIG_HOME")))
 	err := viper.ReadInConfig()
 
 	if err != nil {
