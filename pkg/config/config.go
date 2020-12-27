@@ -51,8 +51,6 @@ func (c *Config) Load() error {
 		return err
 	}
 
-	log.Infof("Config: %v", c)
-
 	return err
 }
 
