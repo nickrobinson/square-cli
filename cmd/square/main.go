@@ -57,6 +57,7 @@ func buildRootCommand() *cobra.Command {
 	cmd.AddCommand(buildDeleteCommand(s))
 
 	cmd.AddCommand(buildStatusCommand(s))
+	cmd.AddCommand(buildInitCommand(s))
 
 	return cmd
 }
