@@ -76,30 +76,6 @@ func (rb *Base) RunRequestsCmd(cmd *cobra.Command, args []string) error {
 	return err
 }
 
-// InitFlags initialize shared flags for all requests commands
-func (rb *Base) InitFlags() {
-	dataUsage := "Data to pass for the API request"
-	if rb.Method == http.MethodPut || rb.Method == http.MethodPost {
-		dataUsage = "JSON data to pass in API request body"
-	}
-	if rb.Method == http.MethodPost {
-		rb.Cmd.Flags().StringVarP(&rb.Parameters.Idempotency, "idempotency", "i", "", "Sets the idempotency key for your request, preventing replaying the same requests within a 24 hour period")
-	}
-	rb.Cmd.Flags().StringArrayVarP(&rb.Parameters.Data, "data", "d", []string{}, dataUsage)
-	rb.Cmd.Flags().BoolVarP(&rb.ShowHeaders, "show-headers", "s", false, "Show headers on responses to GET, POST, and DELETE requests")
-	rb.Cmd.Flags().BoolVarP(&rb.AutoConfirm, "confirm", "c", false, "Automatically confirm the command being entered. WARNING: This will result in NOT being prompted for confirmation for certain commands")
-	// Conditionally add flags for GET requests. I'm doing it here to keep `limit`, `start_after` and `ending_before` unexported
-	if rb.Method == http.MethodGet {
-		rb.Cmd.Flags().StringVarP(&rb.Parameters.Limit, "limit", "l", "", "A limit on the number of objects to be returned, between 1 and 100 (default is 10)")
-	}
-
-	rb.Cmd.Flags().StringVarP(&rb.Parameters.Version, "api-version", "v", "", "Square API Version to use for request")
-
-	// Hidden configuration flags, useful for dev/debugging
-	rb.Cmd.Flags().StringVar(&rb.APIBaseURL, "base-url", "", "Sets the API base URL")
-	rb.Cmd.Flags().MarkHidden("base-url")
-}
-
 // MakeRequest will make a request to the Square API with the specific variables given to it
 func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters) ([]byte, error) {
 	parsedBaseURL, err := url.Parse(rb.getURL())
