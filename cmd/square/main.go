@@ -5,7 +5,6 @@ import (
 
 	"github.com/nickrobinson/square-cli/pkg/square"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // GoReleaser will update based on git tags
@@ -27,8 +26,11 @@ func buildRootCommand() *cobra.Command {
 		SilenceErrors: true,
 		Version:       version,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			s.Config.Load()
-			return nil
+			profile, err := cmd.Flags().GetString("profile")
+			if err != nil {
+				return err
+			}
+			return s.Config.Load(profile)
 		},
 		Short: "A CLI to help you develop your application with 🔲",
 		Long: `The 🔲 CLI gives you tools to make integrating your application
@@ -39,17 +41,8 @@ func buildRootCommand() *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&s.Config.AccessToken, "access-token", "", "The access token to use for authentication")
-	// cmd.PersistentFlags().StringVar(&s.Config.ConfigFile, "config", "", "config file (default is $HOME/.config/square/config.toml)")
 	cmd.PersistentFlags().StringP("profile", "p", "default", "the profile name to read from for config")
-	cmd.PersistentFlags().StringVar(&s.Config.LogLevel, "log-level", "info", "log level (debug, info, warn, error)")
 	cmd.PersistentFlags().VarP(&s.Config.Environment, "env", "e", "Environment to use for request (sandbox/production)")
-
-	viper.SetDefault("environment", "sandbox")
-
-	viper.BindPFlag("accessToken", cmd.PersistentFlags().Lookup("access-token"))
-	viper.BindPFlag("profile", cmd.PersistentFlags().Lookup("profile"))
-	viper.BindPFlag("logLevel", cmd.PersistentFlags().Lookup("log-level"))
-	viper.BindPFlag("environment", cmd.PersistentFlags().Lookup("env"))
 
 	cmd.AddCommand(buildGetCommand(s))
 	cmd.AddCommand(buildPutCommand(s))

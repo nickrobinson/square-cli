@@ -2,20 +2,43 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 
+	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	ProfileName string `mapstructure:"profile"`
-	ConfigFile  string
-	LogLevel    string
-	AccessToken string
-	Environment Environment
-	Profile     Profile
+	AccessToken           string
+	Environment           Environment
+	SandboxAccessToken    string `mapstructure:"sandbox_access_token"`
+	ProductionAccessToken string `mapstructure:"production_access_token"`
+	SandboxBaseUrl        string `mapstructure:"sandbox_base_url"`
+	ProductionBaseUrl     string `mapstructure:"production_base_url"`
+}
+
+// GetConfigFolder retrieves the folder where the config file is stored
+func GetConfigFolder(xdgPath string) string {
+	configPath := xdgPath
+
+	log.WithFields(log.Fields{
+		"prefix": "config.Profile.GetConfigFolder",
+		"path":   configPath,
+	}).Debug("Using config file")
+
+	if configPath == "" {
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		configPath = filepath.Join(home, ".config")
+	}
+
+	return filepath.Join(configPath, "square")
 }
 
 func makePath(path string) error {
@@ -30,7 +53,7 @@ func makePath(path string) error {
 	return nil
 }
 
-func (c *Config) Load() error {
+func (c *Config) Load(profile string) error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(GetConfigFolder(os.Getenv("XDG_CONFIG_HOME")))
@@ -43,8 +66,7 @@ func (c *Config) Load() error {
 
 	viper.Unmarshal(&c)
 
-	profile := viper.GetString("profile")
-	err = viper.UnmarshalKey(profile, &c.Profile)
+	err = viper.UnmarshalKey(profile, &c)
 	if err != nil {
 		log.Errorf("Error while loading config: %v", err)
 		return err
@@ -53,18 +75,14 @@ func (c *Config) Load() error {
 	return err
 }
 
-func (c *Config) GetProfile() *Profile {
-	return &c.Profile
-}
-
 func (c *Config) GetAccessToken() (string, error) {
 	if c.AccessToken != "" {
 		return c.AccessToken, nil
 	} else {
 		if c.Environment == Production {
-			return c.Profile.ProductionAccessToken, nil
+			return c.ProductionAccessToken, nil
 		} else {
-			return c.Profile.SandboxAccessToken, nil
+			return c.SandboxAccessToken, nil
 		}
 	}
 
@@ -74,15 +92,15 @@ func (c *Config) GetAccessToken() (string, error) {
 func (c *Config) GetBaseURL() string {
 	switch c.Environment {
 	case Sandbox:
-		if c.Profile.SandboxBaseUrl != "" {
-			return c.Profile.SandboxBaseUrl
+		if c.SandboxBaseUrl != "" {
+			return c.SandboxBaseUrl
 		}
 		return "https://connect.squareupsandbox.com"
 	case Production:
-		if c.Profile.ProductionBaseUrl != "" {
-			return c.Profile.ProductionBaseUrl
+		if c.ProductionBaseUrl != "" {
+			return c.ProductionBaseUrl
 		}
-		return "https://connect.squareupsandbox.com"
+		return "https://connect.squareup.com"
 	default:
 		return "https://connect.squareupsandbox.com"
 	}

@@ -7,9 +7,12 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+// InitConfig will add user provided data to
+// new/existing Square CLI config
 func (s *Square) InitConfig() error {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter Profile Name (default): ")
@@ -19,25 +22,27 @@ func (s *Square) InitConfig() error {
 	if profileName == "" {
 		profileName = "default"
 	}
-	s.Config.ProfileName = profileName
 
 	fmt.Print("Enter Sandbox Access Token: ")
 	accessTokenBytes, err := terminal.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return err
 	}
-	accessToken := string(accessTokenBytes)
-	s.Config.Profile.SandboxAccessToken = accessToken
+	sandboxAccessToken := string(accessTokenBytes)
+	s.Config.SandboxAccessToken = sandboxAccessToken
 
 	fmt.Print("\nEnter Production Access Token: ")
 	accessTokenBytes, err = terminal.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return err
 	}
-	accessToken = string(accessTokenBytes)
-	s.Config.Profile.ProductionAccessToken = accessToken
+	productionAccessToken := string(accessTokenBytes)
+	s.Config.ProductionAccessToken = productionAccessToken
 
-	s.Config.WriteProfile()
-
-	return nil
+	cfg := map[string]interface{}{
+		"sandbox_access_token":    sandboxAccessToken,
+		"production_access_token": productionAccessToken,
+	}
+	viper.Set(profileName, cfg)
+	return viper.WriteConfig()
 }
