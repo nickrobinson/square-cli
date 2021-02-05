@@ -12,30 +12,30 @@ import (
 
 	"github.com/nickrobinson/square-cli/internal/ansi"
 	"github.com/nickrobinson/square-cli/pkg/config"
-	"github.com/nickrobinson/square-cli/pkg/square"
 	"github.com/nickrobinson/square-cli/pkg/validators"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 // RequestParameters captures the structure of the parameters that can be sent to Square
 type RequestParameters struct {
-	data        []string
-	idempotency string
-	limit       string
-	version     string
+	Data        []string
+	Idempotency string
+	Limit       string
+	Version     string
 }
 
 func (r *RequestParameters) AppendData(data []string) {
-	r.data = append(r.data, data...)
+	r.Data = append(r.Data, data...)
 }
 
 // Base does stuff
 type Base struct {
 	Cmd *cobra.Command
 
-	Method  string
-	Profile *config.Profile
+	Method string
+	Config *config.Config
 
 	Parameters RequestParameters
 
@@ -44,8 +44,8 @@ type Base struct {
 
 	APIBaseURL string
 
-	autoConfirm bool
-	showHeaders bool
+	AutoConfirm bool
+	ShowHeaders bool
 }
 
 var confirmationCommands = map[string]bool{http.MethodDelete: true}
@@ -64,7 +64,7 @@ func (rb *Base) RunRequestsCmd(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	accessToken, err := rb.Profile.GetAccessToken()
+	accessToken, err := rb.Config.GetAccessToken()
 	if err != nil {
 		return err
 	}
@@ -76,51 +76,29 @@ func (rb *Base) RunRequestsCmd(cmd *cobra.Command, args []string) error {
 	return err
 }
 
-// InitFlags initialize shared flags for all requests commands
-func (rb *Base) InitFlags() {
-	dataUsage := "Data to pass for the API request"
-	if rb.Method == http.MethodPut || rb.Method == http.MethodPost {
-		dataUsage = "JSON data to pass in API request body"
-	}
-	if rb.Method == http.MethodPost {
-		rb.Cmd.Flags().StringVarP(&rb.Parameters.idempotency, "idempotency", "i", "", "Sets the idempotency key for your request, preventing replaying the same requests within a 24 hour period")
-	}
-	rb.Cmd.Flags().StringArrayVarP(&rb.Parameters.data, "data", "d", []string{}, dataUsage)
-	rb.Cmd.Flags().BoolVarP(&rb.showHeaders, "show-headers", "s", false, "Show headers on responses to GET, POST, and DELETE requests")
-	rb.Cmd.Flags().BoolVarP(&rb.autoConfirm, "confirm", "c", false, "Automatically confirm the command being entered. WARNING: This will result in NOT being prompted for confirmation for certain commands")
-	// Conditionally add flags for GET requests. I'm doing it here to keep `limit`, `start_after` and `ending_before` unexported
-	if rb.Method == http.MethodGet {
-		rb.Cmd.Flags().StringVarP(&rb.Parameters.limit, "limit", "l", "", "A limit on the number of objects to be returned, between 1 and 100 (default is 10)")
-	}
-
-	rb.Cmd.Flags().StringVarP(&rb.Parameters.version, "api-version", "v", "", "Square API Version to use for request")
-
-	// Hidden configuration flags, useful for dev/debugging
-	rb.Cmd.Flags().StringVar(&rb.APIBaseURL, "base-url", "", "Sets the API base URL")
-	rb.Cmd.Flags().MarkHidden("base-url")
-}
-
 // MakeRequest will make a request to the Square API with the specific variables given to it
 func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters) ([]byte, error) {
 	parsedBaseURL, err := url.Parse(rb.getURL())
 	if err != nil {
+		log.Error(err)
 		return []byte{}, err
 	}
 
-	client := &square.Client{
+	client := Client{
 		BaseURL:     parsedBaseURL,
 		AccessToken: accessToken,
-		Verbose:     rb.showHeaders,
+		Verbose:     rb.ShowHeaders,
 	}
 
 	data := ""
 	if rb.Method == http.MethodGet || rb.Method == http.MethodDelete {
 		data, err = rb.buildDataForRequest(params)
 		if err != nil {
+			log.Error(err)
 			return []byte{}, err
 		}
 	} else {
-		data = params.data[0]
+		data = params.Data[0]
 		if validators.IsValidJSON(data) == false {
 			return []byte{}, errors.New("Invalid JSON data provided")
 		}
@@ -133,6 +111,7 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 
 	resp, err := client.PerformRequest(rb.Method, path, data, configureReq)
 	if err != nil {
+		log.Error(err)
 		return []byte{}, err
 	}
 	defer resp.Body.Close()
@@ -140,6 +119,7 @@ func (rb *Base) MakeRequest(accessToken, path string, params *RequestParameters)
 
 	if !rb.SuppressOutput {
 		if err != nil {
+			log.Error(err)
 			return []byte{}, err
 		}
 
@@ -160,8 +140,8 @@ func (rb *Base) buildDataForRequest(params *RequestParameters) (string, error) {
 	keys := []string{}
 	values := []string{}
 
-	if len(params.data) > 0 {
-		for _, datum := range params.data {
+	if len(params.Data) > 0 {
+		for _, datum := range params.Data {
 			splitDatum := strings.SplitN(datum, "=", 2)
 
 			if len(splitDatum) < 2 {
@@ -174,9 +154,9 @@ func (rb *Base) buildDataForRequest(params *RequestParameters) (string, error) {
 	}
 
 	if rb.Method == http.MethodGet {
-		if params.limit != "" {
+		if params.Limit != "" {
 			keys = append(keys, "limit")
-			values = append(values, params.limit)
+			values = append(values, params.Limit)
 		}
 	}
 
@@ -209,8 +189,8 @@ func encode(keys []string, values []string) string {
 }
 
 func (rb *Base) setVersionHeader(request *http.Request, params *RequestParameters) {
-	if params.version != "" {
-		request.Header.Set("Square-Version", params.version)
+	if params.Version != "" {
+		request.Header.Set("Square-Version", params.Version)
 	}
 }
 
@@ -228,7 +208,7 @@ func (rb *Base) confirmCommand() (bool, error) {
 }
 
 func (rb *Base) getUserConfirmation(reader *bufio.Reader) (bool, error) {
-	if _, needsConfirmation := confirmationCommands[rb.Method]; needsConfirmation && !rb.autoConfirm {
+	if _, needsConfirmation := confirmationCommands[rb.Method]; needsConfirmation && !rb.AutoConfirm {
 		confirmationPrompt := fmt.Sprintf("Are you sure you want to perform the command: %s?\nEnter 'yes' to confirm: ", rb.Method)
 		fmt.Print(confirmationPrompt)
 
@@ -262,5 +242,5 @@ func (rb *Base) getURL() string {
 		return rb.APIBaseURL
 	}
 
-	return rb.Profile.GetBaseURL()
+	return rb.Config.GetBaseURL()
 }
