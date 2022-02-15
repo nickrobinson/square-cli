@@ -108,6 +108,12 @@ func (p *Profile) GetAccessToken() (string, error) {
 	}
 
 	key := viper.GetString(p.ProfileName + "." + p.Environment.String() + "_access_token")
+
+	log.WithFields(log.Fields{
+		"env":          p.Environment.String(),
+		"profile_name": p.ProfileName,
+	}).Debug("Profile/Env Settings")
+
 	if key != "" {
 		err := validators.AccessToken(key)
 		if err != nil {

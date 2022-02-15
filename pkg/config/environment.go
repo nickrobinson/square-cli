@@ -7,6 +7,10 @@ type Environment struct {
 }
 
 func (e *Environment) String() string {
+	// Default to sandbox if not set
+	if len(e.name) == 0 {
+		e.name = "sandbox"
+	}
 	return e.name
 }
 
