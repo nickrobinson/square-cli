@@ -3,7 +3,7 @@ module github.com/nickrobinson/square-cli
 go 1.12
 
 require (
-	github.com/jarcoal/httpmock v1.0.8
+	github.com/jarcoal/httpmock v1.1.0
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mitchellh/go-homedir v1.1.0
