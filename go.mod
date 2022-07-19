@@ -11,10 +11,10 @@ require (
 	github.com/onsi/ginkgo v1.14.1 // indirect
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.10.1
-	github.com/stretchr/testify v1.7.0
+	github.com/spf13/viper v1.12.0
+	github.com/stretchr/testify v1.7.1
 	github.com/tidwall/pretty v1.2.0
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b // indirect
 )
